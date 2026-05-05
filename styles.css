@@ -229,13 +229,31 @@ h2 {
   font-weight: 900;
 }
 
-.version-label {
+.version-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin: 10px 0 0;
+  opacity: 0.44;
+}
+
+.version-label {
   color: #52627d;
   text-align: center;
   font-size: 0.72rem;
   font-weight: 900;
-  opacity: 0.42;
+}
+
+.force-update-button {
+  min-height: 28px;
+  padding: 0 8px;
+  color: #52627d;
+  background: transparent;
+  border: 1px solid rgba(82, 98, 125, 0.32);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
 }
 
 .title-star {

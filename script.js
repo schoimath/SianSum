@@ -7,6 +7,7 @@ const screens = {
 const elements = {
   closeAppButton: document.getElementById("close-app-button"),
   closeAppMessage: document.getElementById("close-app-message"),
+  forceUpdateButton: document.getElementById("force-update-button"),
   startButton: document.getElementById("start-button"),
   musicToggleButton: document.getElementById("music-toggle-button"),
   retryButton: document.getElementById("retry-button"),
@@ -38,7 +39,7 @@ const elements = {
 };
 
 const STORAGE_KEY = "sian-sum-records-v1";
-const APP_VERSION = "0.2.20260506.0248";
+const APP_VERSION = "0.2.20260506.0251";
 
 const state = {
   difficulty: "easy",
@@ -82,6 +83,7 @@ document.addEventListener("pointerdown", handlePressStart, true);
 document.addEventListener("pointerup", handlePressEnd, true);
 document.addEventListener("pointercancel", handlePressEnd, true);
 elements.closeAppButton.addEventListener("click", closeApp);
+elements.forceUpdateButton.addEventListener("click", forceUpdate);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
 elements.retryButton.addEventListener("click", startPractice);
@@ -579,6 +581,28 @@ function closeApp() {
       elements.closeAppMessage.hidden = true;
     }, 2800);
   }, 140);
+}
+
+async function forceUpdate() {
+  elements.forceUpdateButton.disabled = true;
+  elements.forceUpdateButton.textContent = "새로고침";
+
+  try {
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((registration) => registration.unregister()));
+    }
+
+    if ("caches" in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+  } finally {
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set("v", APP_VERSION);
+    nextUrl.searchParams.set("t", Date.now().toString());
+    window.location.replace(nextUrl.toString());
+  }
 }
 
 function toggleMusic() {
