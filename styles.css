@@ -370,6 +370,10 @@ h2 {
   animation: character-pop 0.45s ease;
 }
 
+.result-character {
+  top: 86px;
+}
+
 .problem-card {
   position: relative;
   display: grid;

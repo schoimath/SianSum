@@ -15,7 +15,7 @@ const elements = {
   starCount: document.getElementById("star-count"),
   elapsedTime: document.getElementById("elapsed-time"),
   streakBadge: document.getElementById("streak-badge"),
-  characterImage: document.getElementById("character-image"),
+  characterImages: [...document.querySelectorAll(".character-image")],
   topNumber: document.getElementById("top-number"),
   bottomNumber: document.getElementById("bottom-number"),
   answerInput: document.getElementById("answer-input"),
@@ -65,6 +65,10 @@ const state = {
 
 const expressions = [
   "img/chr_normal_small.jpg",
+  "img/chr_curious_small.jpg"
+];
+const resultExpressions = [
+  "img/chr_good_small.jpg",
   "img/chr_curious_small.jpg"
 ];
 const goodExpression = "img/chr_good_small.jpg";
@@ -349,7 +353,7 @@ function getHintLines(question) {
 
 function showResults() {
   stopTimer();
-  stopExpressionLoop();
+  startExpressionLoop(resultExpressions);
   const record = createRecord();
   const recordState = saveRecord(record);
   const scoreRate = state.correct / state.totalQuestions;
@@ -522,12 +526,13 @@ function toggleMusic() {
   }
 }
 
-function startExpressionLoop() {
+function startExpressionLoop(sequence = expressions) {
   stopExpressionLoop();
-  setCharacterExpression(expressions[0]);
+  state.expressionIndex = 0;
+  setCharacterExpression(sequence[0]);
   state.expressionTimerId = window.setInterval(() => {
-    state.expressionIndex = (state.expressionIndex + 1) % expressions.length;
-    setCharacterExpression(expressions[state.expressionIndex]);
+    state.expressionIndex = (state.expressionIndex + 1) % sequence.length;
+    setCharacterExpression(sequence[state.expressionIndex]);
   }, 2600);
 }
 
@@ -559,13 +564,15 @@ function showCharacterExpression(src, duration) {
 }
 
 function setCharacterExpression(src) {
-  if (!elements.characterImage || elements.characterImage.dataset.expression === src) return;
+  elements.characterImages.forEach((image) => {
+    if (image.dataset.expression === src) return;
 
-  elements.characterImage.dataset.expression = src;
-  elements.characterImage.classList.remove("expression-pop");
-  elements.characterImage.src = src;
-  void elements.characterImage.offsetWidth;
-  elements.characterImage.classList.add("expression-pop");
+    image.dataset.expression = src;
+    image.classList.remove("expression-pop");
+    image.src = src;
+    void image.offsetWidth;
+    image.classList.add("expression-pop");
+  });
 }
 
 function ensureAudio() {
