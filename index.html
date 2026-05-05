@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#8fd8ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="두자리 덧셈">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>두자리 덧셈 탐험</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="space-scene" aria-hidden="true">
+    <div class="star star-a">★</div>
+    <div class="star star-b">★</div>
+    <div class="star star-c">★</div>
+    <div class="planet planet-a"></div>
+    <div class="planet planet-b"></div>
+    <div class="ship">
+      <div class="ship-top"></div>
+      <div class="ship-body">🚀</div>
+    </div>
+  </div>
+
+  <main class="app-shell">
+    <section id="start-screen" class="screen active" aria-labelledby="app-title">
+      <div class="title-row">
+        <span class="title-star" aria-hidden="true">★</span>
+        <h1 id="app-title">두자리 덧셈 탐험</h1>
+        <span class="title-star" aria-hidden="true">★</span>
+      </div>
+      <p class="subtitle">버튼을 눌러 답을 만들고 별을 모아 보자!</p>
+
+      <div class="option-group" role="radiogroup" aria-labelledby="difficulty-title">
+        <h2 id="difficulty-title">난이도 선택</h2>
+        <label class="choice-card">
+          <input type="radio" name="difficulty" value="easy" checked>
+          <span>
+            <strong>쉬움</strong>
+            <small>받아올림 없는 두자리 덧셈</small>
+          </span>
+        </label>
+        <label class="choice-card">
+          <input type="radio" name="difficulty" value="normal">
+          <span>
+            <strong>보통</strong>
+            <small>일의 자리 받아올림 연습</small>
+          </span>
+        </label>
+        <label class="choice-card">
+          <input type="radio" name="difficulty" value="mixed">
+          <span>
+            <strong>섞어서 풀기</strong>
+            <small>받아올림 있는 문제와 없는 문제</small>
+          </span>
+        </label>
+      </div>
+
+      <div class="option-group compact" role="radiogroup" aria-labelledby="count-title">
+        <h2 id="count-title">문제 수 선택</h2>
+        <div class="pill-row">
+          <label class="pill-choice">
+            <input type="radio" name="question-count" value="10" checked>
+            <span>10문제</span>
+          </label>
+          <label class="pill-choice">
+            <input type="radio" name="question-count" value="20">
+            <span>20문제</span>
+          </label>
+        </div>
+      </div>
+
+      <button id="start-button" class="primary-button" type="button">연습 시작</button>
+    </section>
+
+    <section id="quiz-screen" class="screen quiz-layout" aria-labelledby="quiz-title">
+      <h1 id="quiz-title" class="visually-hidden">두자리 덧셈 문제 풀기</h1>
+
+      <div class="status-bar" aria-label="연습 상태">
+        <div><span id="question-progress">1 / 10</span><small>문제</small></div>
+        <div><span id="correct-count">0</span><small>맞힌 개수</small></div>
+        <div><span id="star-count">0</span><small>모은 별</small></div>
+      </div>
+
+      <div id="streak-badge" class="streak-badge" hidden>연속 정답!</div>
+
+      <div class="problem-card" aria-live="polite">
+        <div class="vertical-problem" aria-label="두자리 덧셈 문제">
+          <div id="top-number" class="problem-number">34</div>
+          <div class="problem-line">
+            <span class="plus-sign">+</span>
+            <span id="bottom-number" class="problem-number">25</span>
+          </div>
+          <div class="sum-line"></div>
+        </div>
+
+        <label for="answer-input" class="answer-label">답</label>
+        <input id="answer-input" class="answer-input" type="text" inputmode="none" autocomplete="off" maxlength="3" readonly aria-describedby="feedback-message">
+
+        <div id="feedback-message" class="feedback-message" role="status" aria-live="assertive">숫자 버튼을 누르고 제출해요.</div>
+        <div id="sparkle-area" class="sparkle-area" aria-hidden="true"></div>
+      </div>
+
+      <div class="keypad" aria-label="숫자 버튼">
+        <button type="button" data-key="1">1</button>
+        <button type="button" data-key="2">2</button>
+        <button type="button" data-key="3">3</button>
+        <button type="button" data-key="4">4</button>
+        <button type="button" data-key="5">5</button>
+        <button type="button" data-key="6">6</button>
+        <button type="button" data-key="7">7</button>
+        <button type="button" data-key="8">8</button>
+        <button type="button" data-key="9">9</button>
+        <button type="button" id="clear-button" class="soft-button">지우기</button>
+        <button type="button" data-key="0">0</button>
+        <button type="button" id="submit-button" class="submit-button">제출</button>
+      </div>
+
+      <button id="hint-button" class="hint-button" type="button">힌트 보기</button>
+      <div id="hint-panel" class="hint-panel" aria-live="polite" hidden></div>
+    </section>
+
+    <section id="result-screen" class="screen" aria-labelledby="result-title">
+      <h1 id="result-title">탐험 완료!</h1>
+      <div class="result-constellation" aria-hidden="true">★ ★ ★</div>
+      <p id="result-message" class="result-message">대단해!</p>
+      <div class="result-stats">
+        <div><strong id="final-correct">0</strong><span>맞힌 개수</span></div>
+        <div><strong id="final-total">10</strong><span>전체 문제</span></div>
+        <div><strong id="final-stars">0</strong><span>얻은 별</span></div>
+      </div>
+      <div class="result-actions">
+        <button id="retry-button" class="primary-button" type="button">다시 하기</button>
+        <button id="change-button" class="secondary-button" type="button">난이도 바꾸기</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

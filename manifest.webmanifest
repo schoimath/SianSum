@@ -1,0 +1,11 @@
+{
+  "name": "두자리 덧셈 탐험",
+  "short_name": "두자리 덧셈",
+  "description": "버튼으로 푸는 두자리 덧셈 연습 웹앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7fdff",
+  "theme_color": "#8fd8ff",
+  "lang": "ko",
+  "orientation": "portrait"
+}
