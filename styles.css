@@ -632,6 +632,8 @@ h2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  width: min(100%, 460px);
+  margin: 0 auto;
 }
 
 .visually-hidden {
