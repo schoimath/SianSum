@@ -1,4 +1,4 @@
-const CACHE_NAME = "two-digit-addition-v5";
+const CACHE_NAME = "two-digit-addition-v6";
 const APP_FILES = [
   "./",
   "./index.html",
@@ -7,7 +7,10 @@ const APP_FILES = [
   "./manifest.webmanifest",
   "./img/chr_normal_small.jpg",
   "./img/chr_good_small.jpg",
-  "./img/chr_curious_small.jpg"
+  "./img/chr_curious_small.jpg",
+  "./img/apple-touch-icon.png",
+  "./img/icon-192.png",
+  "./img/icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
