@@ -230,9 +230,12 @@ h2 {
 }
 
 .version-label {
+  margin: 10px 0 0;
   color: #52627d;
-  font-size: 0.92rem;
+  text-align: center;
+  font-size: 0.72rem;
   font-weight: 900;
+  opacity: 0.42;
 }
 
 .title-star {

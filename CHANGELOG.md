@@ -10,6 +10,11 @@
 - Add animated character expressions during quiz play.
 - Optimize character images for web delivery.
 
+## Versioning
+
+- Use `0.2.YYYYMMDD.HHMM` for each pushed build.
+- Show the current build version subtly below the start button.
+
 ## 0.2.0 - 2026-05-06
 
 - Add version label and lightweight version tracking.

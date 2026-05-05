@@ -38,7 +38,7 @@ const elements = {
 };
 
 const STORAGE_KEY = "sian-sum-records-v1";
-const APP_VERSION = "0.2.0";
+const APP_VERSION = "0.2.20260506.0248";
 
 const state = {
   difficulty: "easy",
