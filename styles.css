@@ -318,6 +318,7 @@ h2 {
   display: block;
   font-size: clamp(1.3rem, 4vw, 1.8rem);
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .status-bar small {
@@ -516,6 +517,7 @@ h2 {
 .result-stats strong {
   display: block;
   font-size: 2rem;
+  white-space: nowrap;
 }
 
 .result-stats span {
@@ -580,6 +582,7 @@ h2 {
   margin: 4px 0;
   font-size: 1.55rem;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .best-record-card time,
@@ -617,6 +620,7 @@ h2 {
 .record-list strong {
   font-size: 1.12rem;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .empty-record {
@@ -725,6 +729,14 @@ h2 {
   .status-bar div {
     min-height: 64px;
     padding: 8px 4px;
+  }
+
+  #elapsed-time {
+    font-size: clamp(1rem, 7vw, 1.35rem);
+  }
+
+  #final-time {
+    font-size: clamp(1.35rem, 8vw, 1.8rem);
   }
 
   .keypad button {

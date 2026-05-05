@@ -233,6 +233,7 @@ function handleCorrectAnswer() {
   state.isWaiting = true;
   updateStatus();
   setFeedback("정답! 별 하나 획득!", "good");
+  playCorrectSound();
   elements.streakBadge.hidden = state.streak < 2;
   showSparkles();
 
@@ -245,6 +246,7 @@ function handleSoftRetry() {
   elements.streakBadge.hidden = true;
   elements.answerInput.value = "";
   setFeedback("괜찮아. 일의 자리부터 다시 더해 보자.", "try");
+  playWrongSound();
 
   if (state.attempts >= 2) {
     state.hintStep = Math.max(state.hintStep, 2);
@@ -537,6 +539,21 @@ function playButtonSound() {
   oscillator.connect(gain).connect(ctx.destination);
   oscillator.start();
   oscillator.stop(ctx.currentTime + 0.1);
+}
+
+function playCorrectSound() {
+  if (!state.audioContext) return;
+
+  playTone(659.25, 0.13, 0.075, "triangle");
+  window.setTimeout(() => playTone(783.99, 0.14, 0.075, "triangle"), 90);
+  window.setTimeout(() => playTone(1046.5, 0.22, 0.08, "sine"), 180);
+}
+
+function playWrongSound() {
+  if (!state.audioContext) return;
+
+  playTone(392, 0.16, 0.055, "triangle");
+  window.setTimeout(() => playTone(293.66, 0.24, 0.05, "triangle"), 130);
 }
 
 function startBackgroundMusic() {
