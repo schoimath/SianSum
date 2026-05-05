@@ -805,7 +805,8 @@ h2 {
     display: none;
   }
 
-  .quiz-layout .character-stage {
+  .quiz-layout .character-stage,
+  .result-character {
     position: absolute;
     display: block;
     left: 24px;
@@ -815,9 +816,7 @@ h2 {
   }
 
   .result-character {
-    display: block;
-    width: min(96px, 24vw);
-    margin: 8px auto 0;
+    top: 78px;
   }
 
   #elapsed-time {
