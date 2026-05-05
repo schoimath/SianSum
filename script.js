@@ -37,7 +37,7 @@ const elements = {
 };
 
 const STORAGE_KEY = "sian-sum-records-v1";
-const APP_VERSION = "0.2.20260506.0308";
+const APP_VERSION = "0.2.20260506.0313";
 
 const state = {
   difficulty: "easy",
@@ -80,7 +80,7 @@ document.addEventListener("click", handleGlobalClickSound, true);
 document.addEventListener("pointerdown", handlePressStart, true);
 document.addEventListener("pointerup", handlePressEnd, true);
 document.addEventListener("pointercancel", handlePressEnd, true);
-elements.forceUpdateButton.addEventListener("click", forceUpdate);
+elements.forceUpdateButton?.addEventListener("click", forceUpdate);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
 elements.retryButton.addEventListener("click", startPractice);
@@ -557,14 +557,14 @@ async function forceUpdate() {
   elements.forceUpdateButton.textContent = "새로고침";
 
   try {
-    if ("serviceWorker" in navigator) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((registration) => registration.unregister()));
-    }
-
     if ("caches" in window) {
       const keys = await caches.keys();
       await Promise.all(keys.map((key) => caches.delete(key)));
+    }
+
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((registration) => registration.update()));
     }
   } finally {
     const nextUrl = new URL(window.location.href);

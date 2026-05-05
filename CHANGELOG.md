@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Make in-app updating safer on iOS by keeping the service worker registered.
+- Prefer network for page navigations so updated HTML is not stuck behind cache.
 - Remove the standalone close button.
 - Add an in-app update button that clears caches and reloads the current build.
 - Harden standalone-only close button visibility and press feedback timing.
