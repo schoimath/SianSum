@@ -6,6 +6,7 @@ const screens = {
 
 const elements = {
   startButton: document.getElementById("start-button"),
+  musicToggleButton: document.getElementById("music-toggle-button"),
   retryButton: document.getElementById("retry-button"),
   changeButton: document.getElementById("change-button"),
   homeButton: document.getElementById("home-button"),
@@ -35,10 +36,11 @@ const elements = {
 };
 
 const STORAGE_KEY = "sian-sum-records-v1";
+const APP_VERSION = "0.2.0";
 
 const state = {
   difficulty: "easy",
-  totalQuestions: 10,
+  totalQuestions: 5,
   questions: [],
   currentIndex: 0,
   correct: 0,
@@ -50,10 +52,17 @@ const state = {
   startTime: 0,
   elapsedMs: 0,
   timerId: null,
-  lastResultKey: ""
+  lastResultKey: "",
+  musicEnabled: true,
+  audioReady: false,
+  audioContext: null,
+  bgmTimerId: null,
+  bgmStep: 0
 };
 
+document.addEventListener("click", handleGlobalClickSound, true);
 elements.startButton.addEventListener("click", startPractice);
+elements.musicToggleButton.addEventListener("click", toggleMusic);
 elements.retryButton.addEventListener("click", startPractice);
 elements.changeButton.addEventListener("click", () => showScreen("start"));
 elements.homeButton.addEventListener("click", () => showScreen("start"));
@@ -98,6 +107,8 @@ function showScreen(screenName) {
 }
 
 function startPractice() {
+  ensureAudio();
+  startBackgroundMusic();
   stopTimer();
   state.difficulty = getSelectedValue("difficulty");
   state.totalQuestions = Number(getSelectedValue("question-count"));
@@ -255,6 +266,13 @@ function setFeedback(message, type) {
   elements.feedback.className = `feedback-message ${type}`;
 }
 
+function handleGlobalClickSound(event) {
+  if (!event.target.closest("button, .choice-card, .pill-choice")) return;
+
+  ensureAudio();
+  playButtonSound();
+}
+
 function showSparkles() {
   elements.sparkleArea.innerHTML = "";
   const points = [
@@ -406,8 +424,12 @@ function renderRecords(key) {
   const [difficulty, totalQuestions] = key.split("-");
 
   elements.recordMode.textContent = `${getDifficultyLabel(difficulty)} · ${totalQuestions}문제`;
-  elements.bestRecordCard.textContent = current.best
-    ? `최고 기록 ${formatDuration(current.best.elapsedMs)} · ${formatDateTime(current.best.finishedAt)}`
+  elements.bestRecordCard.innerHTML = current.best
+    ? `
+      <span>최고 기록</span>
+      <strong>${formatDuration(current.best.elapsedMs)}</strong>
+      <time datetime="${current.best.finishedAt}">${formatDateTime(current.best.finishedAt)}</time>
+    `
     : "아직 최고 기록이 없어요.";
 
   elements.recentRecordList.innerHTML = "";
@@ -422,15 +444,15 @@ function renderRecords(key) {
   current.recent.forEach((record) => {
     const item = document.createElement("li");
     item.innerHTML = `
-      <span>${formatDateTime(record.finishedAt)}</span>
       <strong>${formatDuration(record.elapsedMs)}</strong>
+      <time datetime="${record.finishedAt}">${formatDateTime(record.finishedAt)}</time>
     `;
     elements.recentRecordList.appendChild(item);
   });
 }
 
 function resetCurrentRecords() {
-  const password = window.prompt("기록을 지우려면 비밀번호를 입력해 주세요.");
+  const password = window.prompt("모든 기록을 지우려면 비밀번호를 입력해 주세요.");
   if (password === null) return;
 
   if (password !== "1234") {
@@ -438,10 +460,9 @@ function resetCurrentRecords() {
     return;
   }
 
-  const records = loadRecords();
-  delete records[state.lastResultKey || getRecordKey(state.difficulty, state.totalQuestions)];
-  saveRecords(records);
+  saveRecords({});
   renderRecords(state.lastResultKey || getRecordKey(state.difficulty, state.totalQuestions));
+  window.alert("모든 기록을 지웠어요.");
 }
 
 function getDifficultyLabel(difficulty) {
@@ -457,7 +478,7 @@ function formatDuration(ms) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  return `${minutes}분 ${seconds}초`;
 }
 
 function formatDateTime(value) {
@@ -472,4 +493,92 @@ function formatDateTime(value) {
   });
 
   return `${dateText} ${timeText}`;
+}
+
+function toggleMusic() {
+  state.musicEnabled = !state.musicEnabled;
+  elements.musicToggleButton.textContent = state.musicEnabled ? "음악 켜짐" : "음악 꺼짐";
+  elements.musicToggleButton.setAttribute("aria-pressed", String(state.musicEnabled));
+
+  if (state.musicEnabled) {
+    ensureAudio();
+    startBackgroundMusic();
+  } else {
+    stopBackgroundMusic();
+  }
+}
+
+function ensureAudio() {
+  if (state.audioReady) {
+    state.audioContext?.resume?.();
+    return;
+  }
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+
+  state.audioContext = new AudioContext();
+  state.audioReady = true;
+  state.audioContext.resume?.();
+}
+
+function playButtonSound() {
+  const ctx = state.audioContext;
+  if (!ctx) return;
+
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  oscillator.type = "triangle";
+  oscillator.frequency.setValueAtTime(620, ctx.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(920, ctx.currentTime + 0.045);
+  gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.09);
+  oscillator.connect(gain).connect(ctx.destination);
+  oscillator.start();
+  oscillator.stop(ctx.currentTime + 0.1);
+}
+
+function startBackgroundMusic() {
+  if (!state.musicEnabled || state.bgmTimerId || !state.audioContext) return;
+
+  playBackgroundStep();
+  state.bgmTimerId = window.setInterval(playBackgroundStep, 520);
+}
+
+function stopBackgroundMusic() {
+  if (!state.bgmTimerId) return;
+
+  window.clearInterval(state.bgmTimerId);
+  state.bgmTimerId = null;
+}
+
+function playBackgroundStep() {
+  const ctx = state.audioContext;
+  if (!ctx) return;
+
+  const melody = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880, 783.99];
+  const bass = [261.63, 329.63, 392, 329.63];
+  playTone(melody[state.bgmStep % melody.length], 0.22, 0.035, "sine");
+
+  if (state.bgmStep % 2 === 0) {
+    playTone(bass[Math.floor(state.bgmStep / 2) % bass.length], 0.34, 0.018, "triangle");
+  }
+
+  state.bgmStep += 1;
+}
+
+function playTone(frequency, duration, volume, type) {
+  const ctx = state.audioContext;
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  oscillator.type = type;
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(volume, ctx.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+  oscillator.connect(gain).connect(ctx.destination);
+  oscillator.start();
+  oscillator.stop(ctx.currentTime + duration + 0.02);
 }

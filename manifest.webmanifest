@@ -1,7 +1,7 @@
 {
   "name": "시안이의 두자리 덧셈 탐험",
   "short_name": "시안이 덧셈",
-  "description": "버튼으로 푸는 두자리 덧셈 연습 웹앱",
+  "description": "음악과 기록판이 있는 두자리 덧셈 연습 웹앱",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f7fdff",

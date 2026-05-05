@@ -32,6 +32,10 @@
         <span class="title-star" aria-hidden="true">★</span>
       </div>
       <p class="subtitle">버튼을 눌러 답을 만들고 별을 모아 보자!</p>
+      <div class="top-actions">
+        <button id="music-toggle-button" class="audio-toggle-button" type="button" aria-pressed="true">음악 켜짐</button>
+        <span class="version-label">v0.2.0</span>
+      </div>
 
       <div class="option-group" role="radiogroup" aria-labelledby="difficulty-title">
         <h2 id="difficulty-title">난이도 선택</h2>
@@ -62,12 +66,12 @@
         <h2 id="count-title">문제 수 선택</h2>
         <div class="pill-row">
           <label class="pill-choice">
-            <input type="radio" name="question-count" value="10" checked>
-            <span>10문제</span>
+            <input type="radio" name="question-count" value="5" checked>
+            <span>5문제</span>
           </label>
           <label class="pill-choice">
-            <input type="radio" name="question-count" value="20">
-            <span>20문제</span>
+            <input type="radio" name="question-count" value="10">
+            <span>10문제</span>
           </label>
         </div>
       </div>
@@ -79,10 +83,10 @@
       <h1 id="quiz-title" class="visually-hidden">두자리 덧셈 문제 풀기</h1>
 
       <div class="status-bar" aria-label="연습 상태">
-        <div><span id="question-progress">1 / 10</span><small>문제</small></div>
+        <div><span id="question-progress">1 / 5</span><small>문제</small></div>
         <div><span id="correct-count">0</span><small>맞힌 개수</small></div>
         <div><span id="star-count">0</span><small>모은 별</small></div>
-        <div><span id="elapsed-time">0:00</span><small>시간</small></div>
+        <div><span id="elapsed-time">0분 0초</span><small>시간</small></div>
       </div>
 
       <div id="streak-badge" class="streak-badge" hidden>연속 정답!</div>
@@ -129,15 +133,15 @@
       <p id="result-message" class="result-message">대단해!</p>
       <div class="result-stats">
         <div><strong id="final-correct">0</strong><span>맞힌 개수</span></div>
-        <div><strong id="final-total">10</strong><span>전체 문제</span></div>
+        <div><strong id="final-total">5</strong><span>전체 문제</span></div>
         <div><strong id="final-stars">0</strong><span>얻은 별</span></div>
-        <div><strong id="final-time">0:00</strong><span>걸린 시간</span></div>
+        <div><strong id="final-time">0분 0초</strong><span>걸린 시간</span></div>
       </div>
       <section class="record-board" aria-labelledby="record-title">
         <div class="record-header">
           <div>
             <h2 id="record-title">기록판</h2>
-            <p id="record-mode" class="record-mode">쉬움 · 10문제</p>
+            <p id="record-mode" class="record-mode">쉬움 · 5문제</p>
           </div>
           <button id="reset-records-button" class="small-danger-button" type="button">reset</button>
         </div>
