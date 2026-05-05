@@ -15,6 +15,7 @@ const elements = {
   starCount: document.getElementById("star-count"),
   elapsedTime: document.getElementById("elapsed-time"),
   streakBadge: document.getElementById("streak-badge"),
+  characterImage: document.getElementById("character-image"),
   topNumber: document.getElementById("top-number"),
   bottomNumber: document.getElementById("bottom-number"),
   answerInput: document.getElementById("answer-input"),
@@ -56,8 +57,17 @@ const state = {
   audioReady: false,
   audioContext: null,
   bgmTimerId: null,
-  bgmStep: 0
+  bgmStep: 0,
+  expressionTimerId: null,
+  expressionLockId: null,
+  expressionIndex: 0
 };
+
+const expressions = [
+  "img/chr_normal_small.jpg",
+  "img/chr_curious_small.jpg"
+];
+const goodExpression = "img/chr_good_small.jpg";
 
 document.addEventListener("click", handleGlobalClickSound, true);
 elements.startButton.addEventListener("click", startPractice);
@@ -107,6 +117,7 @@ function showScreen(screenName) {
 function startPractice() {
   ensureAudio();
   startBackgroundMusic();
+  startExpressionLoop();
   stopTimer();
   state.difficulty = getSelectedValue("difficulty");
   state.totalQuestions = Number(getSelectedValue("question-count"));
@@ -232,6 +243,7 @@ function handleCorrectAnswer() {
   updateStatus();
   setFeedback("정답! 별 하나 획득!", "good");
   playCorrectSound();
+  showCharacterExpression(goodExpression, 1100);
   elements.streakBadge.hidden = state.streak < 2;
   showSparkles();
 
@@ -245,6 +257,7 @@ function handleSoftRetry() {
   elements.answerInput.value = "";
   setFeedback("괜찮아. 일의 자리부터 다시 더해 보자.", "try");
   playWrongSound();
+  showCharacterExpression("img/chr_curious_small.jpg", 900);
 
   if (state.attempts >= 2) {
     state.hintStep = Math.max(state.hintStep, 2);
@@ -336,6 +349,7 @@ function getHintLines(question) {
 
 function showResults() {
   stopTimer();
+  stopExpressionLoop();
   const record = createRecord();
   const recordState = saveRecord(record);
   const scoreRate = state.correct / state.totalQuestions;
@@ -506,6 +520,52 @@ function toggleMusic() {
   } else {
     stopBackgroundMusic();
   }
+}
+
+function startExpressionLoop() {
+  stopExpressionLoop();
+  setCharacterExpression(expressions[0]);
+  state.expressionTimerId = window.setInterval(() => {
+    state.expressionIndex = (state.expressionIndex + 1) % expressions.length;
+    setCharacterExpression(expressions[state.expressionIndex]);
+  }, 2600);
+}
+
+function stopExpressionLoop() {
+  if (state.expressionTimerId) {
+    window.clearInterval(state.expressionTimerId);
+    state.expressionTimerId = null;
+  }
+
+  if (state.expressionLockId) {
+    window.clearTimeout(state.expressionLockId);
+    state.expressionLockId = null;
+  }
+
+  setCharacterExpression(expressions[0]);
+}
+
+function showCharacterExpression(src, duration) {
+  setCharacterExpression(src);
+
+  if (state.expressionLockId) {
+    window.clearTimeout(state.expressionLockId);
+  }
+
+  state.expressionLockId = window.setTimeout(() => {
+    state.expressionLockId = null;
+    setCharacterExpression(expressions[state.expressionIndex]);
+  }, duration);
+}
+
+function setCharacterExpression(src) {
+  if (!elements.characterImage || elements.characterImage.dataset.expression === src) return;
+
+  elements.characterImage.dataset.expression = src;
+  elements.characterImage.classList.remove("expression-pop");
+  elements.characterImage.src = src;
+  void elements.characterImage.offsetWidth;
+  elements.characterImage.classList.add("expression-pop");
 }
 
 function ensureAudio() {

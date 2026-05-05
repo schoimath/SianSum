@@ -1,10 +1,13 @@
-const CACHE_NAME = "two-digit-addition-v3";
+const CACHE_NAME = "two-digit-addition-v4";
 const APP_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./script.js",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "./img/chr_normal_small.jpg",
+  "./img/chr_good_small.jpg",
+  "./img/chr_curious_small.jpg"
 ];
 
 self.addEventListener("install", (event) => {

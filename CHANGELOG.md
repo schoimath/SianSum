@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add animated character expressions during quiz play.
+- Optimize character images for web delivery.
+
 ## 0.2.0 - 2026-05-06
 
 - Add version label and lightweight version tracking.
