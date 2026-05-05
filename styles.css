@@ -276,7 +276,7 @@ h2 {
 
 .status-bar {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -475,7 +475,7 @@ h2 {
 
 .result-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin: 24px 0;
 }
@@ -500,9 +500,90 @@ h2 {
   font-weight: 900;
 }
 
+.record-board {
+  margin: 22px 0;
+  padding: 18px;
+  background: #ffffff;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+}
+
+.record-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.record-header h2 {
+  margin-bottom: 2px;
+}
+
+.record-mode {
+  margin: 0;
+  color: #52627d;
+  font-weight: 900;
+}
+
+.small-danger-button {
+  min-width: 78px;
+  min-height: 42px;
+  padding: 0 14px;
+  color: #7a2d19;
+  background: #ffe9e1;
+  border: 3px solid #ffd0c1;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.best-record-card {
+  margin: 14px 0;
+  padding: 14px;
+  color: #17325d;
+  background: #eaf4ff;
+  border-radius: 14px;
+  font-size: 1.08rem;
+  font-weight: 900;
+}
+
+.record-subtitle {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.record-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.record-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #fffdf7;
+  border: 2px solid #edf2f8;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.record-list strong {
+  font-size: 1.12rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-record {
+  justify-content: center;
+  color: #52627d;
+}
+
 .result-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -590,6 +671,14 @@ h2 {
     gap: 7px;
   }
 
+  .status-bar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .result-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .status-bar div {
     min-height: 64px;
     padding: 8px 4px;
@@ -602,6 +691,16 @@ h2 {
 
   .result-actions {
     grid-template-columns: 1fr;
+  }
+
+  .record-board {
+    padding: 14px;
+  }
+
+  .record-list li {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .ship {

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#8fd8ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="두자리 덧셈">
+  <meta name="apple-mobile-web-app-title" content="시안이의 두자리 덧셈">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>두자리 덧셈 탐험</title>
+  <title>시안이의 두자리 덧셈 탐험</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -28,7 +28,7 @@
     <section id="start-screen" class="screen active" aria-labelledby="app-title">
       <div class="title-row">
         <span class="title-star" aria-hidden="true">★</span>
-        <h1 id="app-title">두자리 덧셈 탐험</h1>
+        <h1 id="app-title">시안이의 두자리 덧셈 탐험</h1>
         <span class="title-star" aria-hidden="true">★</span>
       </div>
       <p class="subtitle">버튼을 눌러 답을 만들고 별을 모아 보자!</p>
@@ -82,6 +82,7 @@
         <div><span id="question-progress">1 / 10</span><small>문제</small></div>
         <div><span id="correct-count">0</span><small>맞힌 개수</small></div>
         <div><span id="star-count">0</span><small>모은 별</small></div>
+        <div><span id="elapsed-time">0:00</span><small>시간</small></div>
       </div>
 
       <div id="streak-badge" class="streak-badge" hidden>연속 정답!</div>
@@ -130,10 +131,26 @@
         <div><strong id="final-correct">0</strong><span>맞힌 개수</span></div>
         <div><strong id="final-total">10</strong><span>전체 문제</span></div>
         <div><strong id="final-stars">0</strong><span>얻은 별</span></div>
+        <div><strong id="final-time">0:00</strong><span>걸린 시간</span></div>
       </div>
+      <section class="record-board" aria-labelledby="record-title">
+        <div class="record-header">
+          <div>
+            <h2 id="record-title">기록판</h2>
+            <p id="record-mode" class="record-mode">쉬움 · 10문제</p>
+          </div>
+          <button id="reset-records-button" class="small-danger-button" type="button">reset</button>
+        </div>
+        <div id="best-record-card" class="best-record-card">아직 최고 기록이 없어요.</div>
+        <div>
+          <h3 class="record-subtitle">최근 5번</h3>
+          <ol id="recent-record-list" class="record-list"></ol>
+        </div>
+      </section>
       <div class="result-actions">
         <button id="retry-button" class="primary-button" type="button">다시 하기</button>
         <button id="change-button" class="secondary-button" type="button">난이도 바꾸기</button>
+        <button id="home-button" class="secondary-button" type="button">처음으로</button>
       </div>
     </section>
   </main>

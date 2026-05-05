@@ -8,9 +8,12 @@ const elements = {
   startButton: document.getElementById("start-button"),
   retryButton: document.getElementById("retry-button"),
   changeButton: document.getElementById("change-button"),
+  homeButton: document.getElementById("home-button"),
+  resetRecordsButton: document.getElementById("reset-records-button"),
   progress: document.getElementById("question-progress"),
   correctCount: document.getElementById("correct-count"),
   starCount: document.getElementById("star-count"),
+  elapsedTime: document.getElementById("elapsed-time"),
   streakBadge: document.getElementById("streak-badge"),
   topNumber: document.getElementById("top-number"),
   bottomNumber: document.getElementById("bottom-number"),
@@ -24,8 +27,14 @@ const elements = {
   finalCorrect: document.getElementById("final-correct"),
   finalTotal: document.getElementById("final-total"),
   finalStars: document.getElementById("final-stars"),
-  resultMessage: document.getElementById("result-message")
+  finalTime: document.getElementById("final-time"),
+  resultMessage: document.getElementById("result-message"),
+  recordMode: document.getElementById("record-mode"),
+  bestRecordCard: document.getElementById("best-record-card"),
+  recentRecordList: document.getElementById("recent-record-list")
 };
+
+const STORAGE_KEY = "sian-sum-records-v1";
 
 const state = {
   difficulty: "easy",
@@ -37,12 +46,18 @@ const state = {
   streak: 0,
   attempts: 0,
   hintStep: 0,
-  isWaiting: false
+  isWaiting: false,
+  startTime: 0,
+  elapsedMs: 0,
+  timerId: null,
+  lastResultKey: ""
 };
 
 elements.startButton.addEventListener("click", startPractice);
 elements.retryButton.addEventListener("click", startPractice);
 elements.changeButton.addEventListener("click", () => showScreen("start"));
+elements.homeButton.addEventListener("click", () => showScreen("start"));
+elements.resetRecordsButton.addEventListener("click", resetCurrentRecords);
 elements.clearButton.addEventListener("click", clearAnswer);
 elements.submitButton.addEventListener("click", submitAnswer);
 elements.hintButton.addEventListener("click", showNextHint);
@@ -83,6 +98,7 @@ function showScreen(screenName) {
 }
 
 function startPractice() {
+  stopTimer();
   state.difficulty = getSelectedValue("difficulty");
   state.totalQuestions = Number(getSelectedValue("question-count"));
   state.questions = createQuestionSet(state.totalQuestions, state.difficulty);
@@ -90,7 +106,10 @@ function startPractice() {
   state.correct = 0;
   state.stars = 0;
   state.streak = 0;
+  state.elapsedMs = 0;
+  state.lastResultKey = getRecordKey(state.difficulty, state.totalQuestions);
   showScreen("quiz");
+  startTimer();
   loadQuestion();
 }
 
@@ -162,6 +181,7 @@ function updateStatus() {
   elements.progress.textContent = `${state.currentIndex + 1} / ${state.totalQuestions}`;
   elements.correctCount.textContent = state.correct;
   elements.starCount.textContent = state.stars;
+  elements.elapsedTime.textContent = formatDuration(state.elapsedMs);
 }
 
 function addDigit(digit) {
@@ -297,12 +317,18 @@ function getHintLines(question) {
 }
 
 function showResults() {
+  stopTimer();
+  const record = createRecord();
+  const recordState = saveRecord(record);
   const scoreRate = state.correct / state.totalQuestions;
   elements.finalCorrect.textContent = state.correct;
   elements.finalTotal.textContent = state.totalQuestions;
   elements.finalStars.textContent = state.stars;
+  elements.finalTime.textContent = formatDuration(record.elapsedMs);
 
-  if (scoreRate >= 0.9) {
+  if (recordState.isNewBest && recordState.hadBest) {
+    elements.resultMessage.textContent = "시안이가 기록을 깼어! 축하해!";
+  } else if (scoreRate >= 0.9) {
     elements.resultMessage.textContent = "대단해! 두자리 덧셈 우주 대장이야!";
   } else if (scoreRate >= 0.7) {
     elements.resultMessage.textContent = "잘했어! 별을 많이 모았어!";
@@ -310,5 +336,140 @@ function showResults() {
     elements.resultMessage.textContent = "좋아! 다시 연습하면 더 빨라질 수 있어!";
   }
 
+  renderRecords(state.lastResultKey);
   showScreen("result");
+}
+
+function startTimer() {
+  state.startTime = performance.now();
+  state.timerId = window.setInterval(() => {
+    state.elapsedMs = performance.now() - state.startTime;
+    updateStatus();
+  }, 250);
+  updateStatus();
+}
+
+function stopTimer() {
+  if (!state.timerId) return;
+  state.elapsedMs = performance.now() - state.startTime;
+  window.clearInterval(state.timerId);
+  state.timerId = null;
+}
+
+function createRecord() {
+  const finishedAt = new Date();
+
+  return {
+    id: `${finishedAt.getTime()}-${Math.random().toString(36).slice(2, 8)}`,
+    difficulty: state.difficulty,
+    totalQuestions: state.totalQuestions,
+    elapsedMs: Math.round(state.elapsedMs),
+    finishedAt: finishedAt.toISOString()
+  };
+}
+
+function getRecordKey(difficulty, totalQuestions) {
+  return `${difficulty}-${totalQuestions}`;
+}
+
+function loadRecords() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveRecords(records) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+}
+
+function saveRecord(record) {
+  const records = loadRecords();
+  const key = getRecordKey(record.difficulty, record.totalQuestions);
+  const current = records[key] || { best: null, recent: [] };
+  const hadBest = Boolean(current.best);
+  const isNewBest = !current.best || record.elapsedMs < current.best.elapsedMs;
+
+  records[key] = {
+    best: isNewBest ? record : current.best,
+    recent: [record, ...current.recent].slice(0, 5)
+  };
+  saveRecords(records);
+
+  return { isNewBest, hadBest };
+}
+
+function renderRecords(key) {
+  const records = loadRecords();
+  const current = records[key] || { best: null, recent: [] };
+  const [difficulty, totalQuestions] = key.split("-");
+
+  elements.recordMode.textContent = `${getDifficultyLabel(difficulty)} · ${totalQuestions}문제`;
+  elements.bestRecordCard.textContent = current.best
+    ? `최고 기록 ${formatDuration(current.best.elapsedMs)} · ${formatDateTime(current.best.finishedAt)}`
+    : "아직 최고 기록이 없어요.";
+
+  elements.recentRecordList.innerHTML = "";
+  if (!current.recent.length) {
+    const item = document.createElement("li");
+    item.className = "empty-record";
+    item.textContent = "최근 기록이 없어요.";
+    elements.recentRecordList.appendChild(item);
+    return;
+  }
+
+  current.recent.forEach((record) => {
+    const item = document.createElement("li");
+    item.innerHTML = `
+      <span>${formatDateTime(record.finishedAt)}</span>
+      <strong>${formatDuration(record.elapsedMs)}</strong>
+    `;
+    elements.recentRecordList.appendChild(item);
+  });
+}
+
+function resetCurrentRecords() {
+  const password = window.prompt("기록을 지우려면 비밀번호를 입력해 주세요.");
+  if (password === null) return;
+
+  if (password !== "1234") {
+    window.alert("비밀번호가 맞지 않아요.");
+    return;
+  }
+
+  const records = loadRecords();
+  delete records[state.lastResultKey || getRecordKey(state.difficulty, state.totalQuestions)];
+  saveRecords(records);
+  renderRecords(state.lastResultKey || getRecordKey(state.difficulty, state.totalQuestions));
+}
+
+function getDifficultyLabel(difficulty) {
+  return {
+    easy: "쉬움",
+    normal: "보통",
+    mixed: "섞임"
+  }[difficulty] || difficulty;
+}
+
+function formatDuration(ms) {
+  const totalSeconds = Math.max(0, Math.round(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function formatDateTime(value) {
+  const date = new Date(value);
+  const dateText = date.toLocaleDateString("ko-KR", {
+    month: "2-digit",
+    day: "2-digit"
+  });
+  const timeText = date.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return `${dateText} ${timeText}`;
 }
