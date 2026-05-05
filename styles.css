@@ -54,47 +54,6 @@ label:focus-within {
   overflow: hidden;
 }
 
-.close-app-button {
-  position: fixed;
-  top: max(10px, env(safe-area-inset-top));
-  right: max(10px, env(safe-area-inset-right));
-  z-index: 5;
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  color: #17325d;
-  background: rgba(255, 255, 255, 0.88);
-  border: 3px solid rgba(183, 233, 255, 0.95);
-  border-radius: 50%;
-  box-shadow: 0 8px 18px rgba(42, 86, 140, 0.16);
-  font-size: 1.55rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.close-app-button[hidden],
-body:not(.is-standalone) .close-app-button {
-  display: none !important;
-}
-
-.close-app-message {
-  position: fixed;
-  left: 50%;
-  bottom: max(18px, env(safe-area-inset-bottom));
-  z-index: 6;
-  width: min(92vw, 360px);
-  padding: 12px 14px;
-  color: #17325d;
-  background: #ffffff;
-  border: 3px solid #b7e9ff;
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(42, 86, 140, 0.2);
-  text-align: center;
-  font-weight: 900;
-  transform: translateX(-50%);
-}
-
 .star {
   position: absolute;
   color: #ffd447;

@@ -5,8 +5,6 @@ const screens = {
 };
 
 const elements = {
-  closeAppButton: document.getElementById("close-app-button"),
-  closeAppMessage: document.getElementById("close-app-message"),
   forceUpdateButton: document.getElementById("force-update-button"),
   startButton: document.getElementById("start-button"),
   musicToggleButton: document.getElementById("music-toggle-button"),
@@ -39,7 +37,7 @@ const elements = {
 };
 
 const STORAGE_KEY = "sian-sum-records-v1";
-const APP_VERSION = "0.2.20260506.0251";
+const APP_VERSION = "0.2.20260506.0308";
 
 const state = {
   difficulty: "easy",
@@ -82,7 +80,6 @@ document.addEventListener("click", handleGlobalClickSound, true);
 document.addEventListener("pointerdown", handlePressStart, true);
 document.addEventListener("pointerup", handlePressEnd, true);
 document.addEventListener("pointercancel", handlePressEnd, true);
-elements.closeAppButton.addEventListener("click", closeApp);
 elements.forceUpdateButton.addEventListener("click", forceUpdate);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
@@ -121,8 +118,6 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
-
-setupStandaloneControls();
 
 function showScreen(screenName) {
   Object.values(screens).forEach((screen) => screen.classList.remove("active"));
@@ -555,32 +550,6 @@ function formatDateTime(value) {
   });
 
   return `${dateText} ${timeText}`;
-}
-
-function setupStandaloneControls() {
-  if (isStandaloneMode()) {
-    document.body.classList.add("is-standalone");
-    elements.closeAppButton.hidden = false;
-  } else {
-    document.body.classList.remove("is-standalone");
-    elements.closeAppButton.hidden = true;
-  }
-}
-
-function isStandaloneMode() {
-  return window.navigator.standalone === true
-    || window.matchMedia("(display-mode: standalone)").matches;
-}
-
-function closeApp() {
-  window.close();
-
-  window.setTimeout(() => {
-    elements.closeAppMessage.hidden = false;
-    window.setTimeout(() => {
-      elements.closeAppMessage.hidden = true;
-    }, 2800);
-  }, 140);
 }
 
 async function forceUpdate() {
