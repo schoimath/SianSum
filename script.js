@@ -8,7 +8,6 @@ const elements = {
   startButton: document.getElementById("start-button"),
   musicToggleButton: document.getElementById("music-toggle-button"),
   retryButton: document.getElementById("retry-button"),
-  changeButton: document.getElementById("change-button"),
   homeButton: document.getElementById("home-button"),
   resetRecordsButton: document.getElementById("reset-records-button"),
   progress: document.getElementById("question-progress"),
@@ -64,7 +63,6 @@ document.addEventListener("click", handleGlobalClickSound, true);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
 elements.retryButton.addEventListener("click", startPractice);
-elements.changeButton.addEventListener("click", () => showScreen("start"));
 elements.homeButton.addEventListener("click", () => showScreen("start"));
 elements.resetRecordsButton.addEventListener("click", resetCurrentRecords);
 elements.clearButton.addEventListener("click", clearAnswer);
