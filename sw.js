@@ -1,4 +1,4 @@
-const CACHE_NAME = "two-digit-addition-v6";
+const CACHE_NAME = "two-digit-addition-v7";
 const APP_FILES = [
   "./",
   "./index.html",

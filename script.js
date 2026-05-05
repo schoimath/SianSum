@@ -5,6 +5,8 @@ const screens = {
 };
 
 const elements = {
+  closeAppButton: document.getElementById("close-app-button"),
+  closeAppMessage: document.getElementById("close-app-message"),
   startButton: document.getElementById("start-button"),
   musicToggleButton: document.getElementById("music-toggle-button"),
   retryButton: document.getElementById("retry-button"),
@@ -75,6 +77,11 @@ const resultExpressions = [
 const goodExpression = "img/chr_good_small.jpg";
 
 document.addEventListener("click", handleGlobalClickSound, true);
+document.addEventListener("pointerdown", handlePressStart, true);
+document.addEventListener("pointerup", handlePressEnd, true);
+document.addEventListener("pointercancel", handlePressEnd, true);
+document.addEventListener("pointerleave", handlePressEnd, true);
+elements.closeAppButton.addEventListener("click", closeApp);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
 elements.retryButton.addEventListener("click", startPractice);
@@ -112,6 +119,8 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
+
+setupStandaloneControls();
 
 function showScreen(screenName) {
   Object.values(screens).forEach((screen) => screen.classList.remove("active"));
@@ -287,6 +296,25 @@ function handleGlobalClickSound(event) {
   if (!event.target.closest("button, .choice-card, .pill-choice")) return;
 
   unlockAudio().then(playButtonSound);
+}
+
+function handlePressStart(event) {
+  const target = event.target.closest("button, .choice-card, .pill-choice");
+  if (!target) return;
+
+  target.classList.add("is-pressed");
+  window.setTimeout(() => target.classList.remove("is-pressed"), 160);
+
+  if ("vibrate" in navigator) {
+    navigator.vibrate(8);
+  }
+}
+
+function handlePressEnd(event) {
+  const target = event.target.closest("button, .choice-card, .pill-choice");
+  if (!target) return;
+
+  target.classList.remove("is-pressed");
 }
 
 function showSparkles() {
@@ -510,6 +538,28 @@ function formatDateTime(value) {
   });
 
   return `${dateText} ${timeText}`;
+}
+
+function setupStandaloneControls() {
+  if (isStandaloneMode()) {
+    elements.closeAppButton.hidden = false;
+  }
+}
+
+function isStandaloneMode() {
+  return window.navigator.standalone === true
+    || window.matchMedia("(display-mode: standalone)").matches;
+}
+
+function closeApp() {
+  window.close();
+
+  window.setTimeout(() => {
+    elements.closeAppMessage.hidden = false;
+    window.setTimeout(() => {
+      elements.closeAppMessage.hidden = true;
+    }, 2800);
+  }, 140);
 }
 
 function toggleMusic() {

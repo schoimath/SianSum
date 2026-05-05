@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add standalone app close control and stronger mobile press feedback.
 - Add iPhone home screen and PWA icons using the smiling character.
 - Improve mobile audio unlock behavior.
 - Make the quiz screen more compact on phones.
