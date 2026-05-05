@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Improve mobile audio unlock behavior.
+- Make the quiz screen more compact on phones.
 - Add animated character expressions during quiz play.
 - Optimize character images for web delivery.
 

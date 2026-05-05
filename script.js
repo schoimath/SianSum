@@ -56,6 +56,7 @@ const state = {
   musicEnabled: true,
   audioReady: false,
   audioContext: null,
+  audioUnlockPromise: null,
   bgmTimerId: null,
   bgmStep: 0,
   expressionTimerId: null,
@@ -119,8 +120,7 @@ function showScreen(screenName) {
 }
 
 function startPractice() {
-  ensureAudio();
-  startBackgroundMusic();
+  unlockAudio().then(startBackgroundMusic);
   startExpressionLoop();
   stopTimer();
   state.difficulty = getSelectedValue("difficulty");
@@ -286,8 +286,7 @@ function setFeedback(message, type) {
 function handleGlobalClickSound(event) {
   if (!event.target.closest("button, .choice-card, .pill-choice")) return;
 
-  ensureAudio();
-  playButtonSound();
+  unlockAudio().then(playButtonSound);
 }
 
 function showSparkles() {
@@ -519,8 +518,7 @@ function toggleMusic() {
   elements.musicToggleButton.setAttribute("aria-pressed", String(state.musicEnabled));
 
   if (state.musicEnabled) {
-    ensureAudio();
-    startBackgroundMusic();
+    unlockAudio().then(startBackgroundMusic);
   } else {
     stopBackgroundMusic();
   }
@@ -575,18 +573,41 @@ function setCharacterExpression(src) {
   });
 }
 
-function ensureAudio() {
-  if (state.audioReady) {
-    state.audioContext?.resume?.();
-    return;
+function unlockAudio() {
+  ensureAudioContext();
+  if (!state.audioContext) return Promise.resolve();
+
+  if (state.audioContext.state === "running") {
+    state.audioReady = true;
+    return Promise.resolve();
   }
 
+  state.audioUnlockPromise = state.audioContext.resume().then(() => {
+    state.audioReady = true;
+    playSilentUnlockTone();
+  }).catch(() => {});
+
+  return state.audioUnlockPromise;
+}
+
+function ensureAudioContext() {
+  if (state.audioContext) return;
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   if (!AudioContext) return;
 
   state.audioContext = new AudioContext();
-  state.audioReady = true;
-  state.audioContext.resume?.();
+}
+
+function playSilentUnlockTone() {
+  const ctx = state.audioContext;
+  if (!ctx) return;
+
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  gain.gain.value = 0.0001;
+  oscillator.connect(gain).connect(ctx.destination);
+  oscillator.start();
+  oscillator.stop(ctx.currentTime + 0.02);
 }
 
 function playButtonSound() {

@@ -751,7 +751,7 @@ h2 {
     min-height: 100dvh;
     border-width: 0;
     border-radius: 0;
-    padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom));
+    padding: max(10px, env(safe-area-inset-top)) 12px max(10px, env(safe-area-inset-bottom));
   }
 
   .quiz-layout {
@@ -770,7 +770,8 @@ h2 {
   }
 
   .status-bar {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 8px;
   }
 
   .result-stats {
@@ -778,15 +779,25 @@ h2 {
   }
 
   .status-bar div {
-    min-height: 64px;
-    padding: 8px 4px;
+    min-height: 46px;
+    padding: 5px 2px;
+    border-width: 2px;
+    border-radius: 12px;
+  }
+
+  .status-bar span {
+    font-size: clamp(0.98rem, 4.4vw, 1.18rem);
+  }
+
+  .status-bar small {
+    font-size: 0.72rem;
   }
 
   .character-stage {
     position: relative;
     inset: auto;
-    width: min(108px, 28vw);
-    margin: 0 auto 10px;
+    width: min(78px, 21vw);
+    margin: -2px auto 6px;
   }
 
   #elapsed-time {
@@ -798,8 +809,10 @@ h2 {
   }
 
   .keypad button {
-    min-height: clamp(58px, 9.4dvh, 78px);
-    font-size: 1.7rem;
+    min-height: clamp(48px, 7.3dvh, 62px);
+    border-width: 2px;
+    border-radius: 14px;
+    font-size: 1.45rem;
   }
 
   .result-actions {
@@ -822,21 +835,47 @@ h2 {
   }
 
   .problem-card {
-    padding: 16px 12px 14px;
+    gap: 7px;
+    padding: 10px 10px 9px;
+    border-width: 3px;
+    border-radius: 18px;
   }
 
   .vertical-problem {
-    width: min(220px, 76vw);
-    font-size: clamp(3.4rem, 14dvh, 5.7rem);
+    width: min(164px, 56vw);
+    font-size: clamp(2.7rem, 10.5dvh, 4.4rem);
+  }
+
+  .sum-line {
+    height: 5px;
+    margin-top: 6px;
+  }
+
+  .answer-label {
+    font-size: 1rem;
   }
 
   .answer-input {
-    height: 62px;
-    font-size: 2.1rem;
+    height: 50px;
+    border-width: 3px;
+    border-radius: 16px;
+    font-size: 1.85rem;
+  }
+
+  .feedback-message {
+    min-height: 24px;
+    font-size: 0.95rem;
+  }
+
+  .keypad {
+    gap: 7px;
+    margin-top: 8px;
   }
 
   .hint-button {
-    min-height: 52px;
+    min-height: 44px;
+    margin-top: 8px;
+    font-size: 1rem;
   }
 }
 
