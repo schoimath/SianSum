@@ -73,6 +73,11 @@ label:focus-within {
   line-height: 1;
 }
 
+.close-app-button[hidden],
+body:not(.is-standalone) .close-app-button {
+  display: none !important;
+}
+
 .close-app-message {
   position: fixed;
   left: 50%;
@@ -325,14 +330,14 @@ h2 {
 .hint-button:active,
 .keypad button:active,
 .is-pressed {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.12);
+  transform: translateY(5px) scale(0.985);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
 }
 
 button.is-pressed,
 .choice-card.is-pressed,
 .pill-choice.is-pressed span {
-  filter: brightness(0.96) saturate(1.08);
+  filter: brightness(0.93) saturate(1.14);
 }
 
 .primary-button {

@@ -63,7 +63,8 @@ const state = {
   bgmStep: 0,
   expressionTimerId: null,
   expressionLockId: null,
-  expressionIndex: 0
+  expressionIndex: 0,
+  pressTimers: new WeakMap()
 };
 
 const expressions = [
@@ -80,7 +81,6 @@ document.addEventListener("click", handleGlobalClickSound, true);
 document.addEventListener("pointerdown", handlePressStart, true);
 document.addEventListener("pointerup", handlePressEnd, true);
 document.addEventListener("pointercancel", handlePressEnd, true);
-document.addEventListener("pointerleave", handlePressEnd, true);
 elements.closeAppButton.addEventListener("click", closeApp);
 elements.startButton.addEventListener("click", startPractice);
 elements.musicToggleButton.addEventListener("click", toggleMusic);
@@ -302,8 +302,17 @@ function handlePressStart(event) {
   const target = event.target.closest("button, .choice-card, .pill-choice");
   if (!target) return;
 
+  const previousTimer = state.pressTimers.get(target);
+  if (previousTimer) {
+    window.clearTimeout(previousTimer);
+  }
+
   target.classList.add("is-pressed");
-  window.setTimeout(() => target.classList.remove("is-pressed"), 160);
+  const timer = window.setTimeout(() => {
+    target.classList.remove("is-pressed");
+    state.pressTimers.delete(target);
+  }, 190);
+  state.pressTimers.set(target, timer);
 
   if ("vibrate" in navigator) {
     navigator.vibrate(8);
@@ -314,7 +323,13 @@ function handlePressEnd(event) {
   const target = event.target.closest("button, .choice-card, .pill-choice");
   if (!target) return;
 
-  target.classList.remove("is-pressed");
+  const timer = state.pressTimers.get(target);
+  if (!timer) return;
+
+  window.setTimeout(() => {
+    target.classList.remove("is-pressed");
+    state.pressTimers.delete(target);
+  }, 80);
 }
 
 function showSparkles() {
@@ -542,7 +557,11 @@ function formatDateTime(value) {
 
 function setupStandaloneControls() {
   if (isStandaloneMode()) {
+    document.body.classList.add("is-standalone");
     elements.closeAppButton.hidden = false;
+  } else {
+    document.body.classList.remove("is-standalone");
+    elements.closeAppButton.hidden = true;
   }
 }
 

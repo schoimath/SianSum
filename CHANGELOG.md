@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Harden standalone-only close button visibility and press feedback timing.
 - Add standalone app close control and stronger mobile press feedback.
 - Add iPhone home screen and PWA icons using the smiling character.
 - Improve mobile audio unlock behavior.
